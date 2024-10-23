@@ -141,7 +141,7 @@
 
 // Subsystem fire priority, from lowest to highest priority
 // If the subsystem isn't listed here it's either DEFAULT or PROCESS (if it's a processing subsystem child)
-
+#define FIRE_PRIORITY_VORE			5	//CIT VORE PORT EDIT
 #define FIRE_PRIORITY_ROLE_CLASS_HANDLER 10
 #define FIRE_PRIORITY_PING			10
 #define FIRE_PRIORITY_WET_FLOORS	10

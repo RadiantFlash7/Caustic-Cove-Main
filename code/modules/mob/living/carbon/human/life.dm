@@ -135,6 +135,8 @@
 		var/obj/item/clothing/CH = head
 		if (CS.clothing_flags & CH.clothing_flags & STOPSPRESSUREDAMAGE)
 			return ONE_ATMOSPHERE
+	if(isbelly(loc)) //START OF CIT CHANGES - Makes it so you don't suffocate while inside vore organs. Remind me to modularize this some time - Bhijn
+		return ONE_ATMOSPHERE
 	return pressure
 
 
@@ -203,6 +205,10 @@
 
 /mob/living/carbon/human/proc/get_thermal_protection()
 	var/thermal_protection = 0 //Simple check to estimate how protected we are against multiple temperatures
+	if(ismob(loc))	//CIT VORE PORT EDIT START
+		return FIRE_IMMUNITY_MAX_TEMP_PROTECT
+	if(isbelly(loc))
+		return FIRE_IMMUNITY_MAX_TEMP_PROTECT	//CIT VORE PORT EDIT END
 	if(wear_armor)
 		if(wear_armor.max_heat_protection_temperature >= FIRE_SUIT_MAX_TEMP_PROTECT)
 			thermal_protection += (wear_armor.max_heat_protection_temperature*0.7)

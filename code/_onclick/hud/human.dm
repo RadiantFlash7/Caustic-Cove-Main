@@ -413,6 +413,13 @@
 	using.hud = src
 	static_inventory += using
 
+	using = new /atom/movable/screen/voretoggle() //We fancy Vore now
+	using.icon = tg_ui_icon_to_cit_ui(ui_style)
+	using.screen_loc = ui_voremode
+	if(!widescreenlayout)
+		using.screen_loc = ui_boxvore
+	using.hud = src
+	static_inventory += using
 /*
 	healthdoll = new /atom/movable/screen/healthdoll()
 	healthdoll.icon = ui_style

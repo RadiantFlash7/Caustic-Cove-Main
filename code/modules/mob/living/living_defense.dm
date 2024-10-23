@@ -197,7 +197,14 @@
 /mob/living/proc/grabbedby(mob/living/carbon/user, supress_message = FALSE, item_override)
 	if(!user || !src || anchored || !isturf(user.loc))
 		return FALSE
-
+	//normal vore check.
+	if(user.pulling && user.grab_state == GRAB_AGGRESSIVE && user.voremode)
+		if(ismob(user.pulling))
+			var/mob/P = user.pulling
+			user.vore_attack(user, P, src) // User, Pulled, Predator target (which can be user, pulling, or src)
+			return
+	if(user == src) //we want to be able to self click if we're voracious
+		return FALSE
 	if(!user.pulling || user.pulling == src)
 		user.start_pulling(src, supress_message = supress_message, item_override = item_override)
 		return
@@ -258,6 +265,8 @@
 		if(user.l_grab)
 			user.l_grab.grab_state = GRAB_AGGRESSIVE
 
+	if(user.voremode && (user.l_grab.grab_state == GRAB_AGGRESSIVE || user.r_grab.grab_state == GRAB_AGGRESSIVE))
+		return FALSE
 	user.update_grab_intents()
 
 	var/add_log = ""

@@ -126,6 +126,39 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 			S["hair_style_name"]	>> hairstyle
 		if(S["facial_style_name"])
 			S["facial_style_name"]	>> facial_hairstyle
+
+	if(current_version < 26)
+		var/vr_path = "data/player_saves/[parent.ckey[1]]/[parent.ckey]/vore/character[default_slot].json"
+		if(fexists(vr_path))
+			var/list/json_from_file = json_decode(file2text(vr_path))
+			if(json_from_file)
+				if(json_from_file["digestable"])
+					vore_flags |= DIGESTABLE
+				if(json_from_file["devourable"])
+					vore_flags |= DEVOURABLE
+				if(json_from_file["feeding"])
+					vore_flags |= FEEDING
+				if(json_from_file["lickable"])
+					vore_flags |= LICKABLE
+				belly_prefs = json_from_file["belly_prefs"]
+				vore_taste = json_from_file["vore_taste"]
+	if(current_version < 29)
+		var/digestable
+		var/devourable
+		var/feeding
+		var/lickable
+		S["digestable"] >> digestable
+		S["devourable"] >> devourable
+		S["feeding"] >> feeding
+		S["lickable"] >> lickable
+		if(digestable)
+			vore_flags |= DIGESTABLE
+		if(devourable)
+			vore_flags |= DEVOURABLE
+		if(feeding)
+			vore_flags |= FEEDING
+		if(lickable)
+			vore_flags |= LICKABLE
 	if(current_version < 30)
 		S["voice_color"]		>> voice_color
 
@@ -133,6 +166,7 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	if(!ckey)
 		return
 	path = "data/player_saves/[copytext(ckey,1,2)]/[ckey]/[filename]"
+	vr_path = "data/player_saves/[ckey[1]]/[ckey]/vore"
 
 /datum/preferences/proc/load_preferences()
 	if(!path)
@@ -454,6 +488,15 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 
 	S["pronouns"] >> pronouns
 	S["voice_type"] >> voice_type
+
+	S["vore_flags"] >> vore_flags//CIT VORE PORT EDIT START
+	S["vore_taste"] >> vore_taste
+	S["vore_smell"] >> vore_smell
+	var/char_vr_path = "[vr_path]/character_[default_slot]_v2.json"
+	if(fexists(char_vr_path))
+		var/list/json_from_file = json_decode(file2text(char_vr_path))
+		if(json_from_file)
+			belly_prefs = json_from_file["belly_prefs"]//CIT VORE PORT EDIT END
 	//try to fix any outdated data if necessary
 	if(needs_update >= 0)
 		update_character(needs_update, S)		//needs_update == savefile_version if we need an update (positive integer)
@@ -521,6 +564,10 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 			job_preferences -= j
 
 	all_quirks = SANITIZE_LIST(all_quirks)
+	vore_flags = sanitize_integer(vore_flags, 0, MAX_VORE_FLAG, 0)
+	vore_taste = copytext(vore_taste, 1, MAX_TASTE_LEN)
+	vore_smell = copytext(vore_smell, 1, MAX_TASTE_LEN)
+	belly_prefs = SANITIZE_LIST(belly_prefs)
 
 	S["customizer_entries"] >> customizer_entries
 	validate_customizer_entries()
@@ -599,7 +646,14 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	WRITE_FILE(S["voice_type"] , voice_type)
 	WRITE_FILE(S["pronouns"] , pronouns)
 	WRITE_FILE(S["statpack"] , statpack.type)
-
+	WRITE_FILE(S["vore_flags"]			, vore_flags)
+	WRITE_FILE(S["vore_taste"]			, vore_taste)
+	WRITE_FILE(S["vore_smell"]			, vore_smell)
+	var/char_vr_path = "[vr_path]/character_[default_slot]_v2.json"
+	var/belly_prefs_json = safe_json_encode(list("belly_prefs" = belly_prefs))
+	if(fexists(char_vr_path))
+		fdel(char_vr_path)
+	text2file(belly_prefs_json,char_vr_path)
 
 	return TRUE
 
