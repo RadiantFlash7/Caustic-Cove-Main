@@ -66,6 +66,9 @@
 	var/block2add
 	var/detail_tag
 	var/detail_color
+	var/boobed_detail = TRUE
+	var/sleeved_detail = TRUE
+	var/list/original_armor //For restoring broken armor
 
 /obj/item/clothing/New()
 	..()
@@ -231,13 +234,20 @@
 	tastes = list("dust" = 1, "lint" = 1)
 	foodtype = CLOTH
 
-/obj/item/clothing/attack(mob/M, mob/user, def_zone)
+/obj/item/clothing/attack(mob/living/M, mob/living/user, def_zone)
 	if(user.used_intent.type != INTENT_HARM && ismoth(M))
 		var/obj/item/reagent_containers/food/snacks/clothing/clothing_as_food = new
 		clothing_as_food.name = name
 		if(clothing_as_food.attack(M, user, def_zone))
 			take_damage(15, sound_effect=FALSE)
 		qdel(clothing_as_food)
+	else if(M.on_fire)
+		if(user == M)
+			return
+		user.changeNext_move(CLICK_CD_MELEE)
+		M.visible_message(span_warning("[user] pats out the flames on [M] with [src]!"))
+		M.adjust_fire_stacks(-2)
+		take_damage(10, BURN, "fire")
 	else
 		return ..()
 
@@ -310,6 +320,7 @@
 /obj/item/clothing/obj_break(damage_flag)
 	if(!damaged_clothes)
 		update_clothes_damaged_state(TRUE)
+	original_armor = armor
 	var/brokemessage = FALSE
 	for(var/x in armor)
 		if(armor[x] > 0)
@@ -320,6 +331,11 @@
 		to_chat(M, "ARMOR BROKEN..!")
 	..()
 
+/obj/item/clothing/proc/obj_fix(damage_flag)
+	obj_broken = FALSE
+	if(damaged_clothes)
+		update_clothes_damaged_state(FALSE)
+	armor = original_armor
 /obj/item/clothing/proc/update_clothes_damaged_state(damaging = TRUE)
 	var/index = "[REF(initial(icon))]-[initial(icon_state)]"
 	var/static/list/damaged_clothes_icons = list()

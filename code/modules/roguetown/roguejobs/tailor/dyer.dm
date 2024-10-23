@@ -9,6 +9,7 @@
 	var/activecolor = "#FFFFFF"
 	/// Allow holder'd mobs
 	var/allow_mobs = TRUE
+/*
 	var/list/allowed_types = list(
 			/obj/item/clothing/suit/roguetown/shirt/robe,
 			/obj/item/clothing/suit/roguetown/shirt/dress,
@@ -28,8 +29,15 @@
 			/obj/item/clothing/shoes/roguetown/simpleshoes,
 			/obj/item/clothing/suit/roguetown/armor/gambeson
 			)
+*/
+	//EVIL CODE !!
+	var/list/allowed_types = list(
+			/obj/item/clothing,
+			/obj/item/storage
+			)
+
 	var/static/list/selectable_colors = list(
-  		"White" = "#ffffff",
+		"White" = "#ffffff",
 		"Black" = "#414143",
 		"Light Grey" = "#999999",
 		"Mage Grey" = "#6c6c6c",
@@ -70,15 +78,21 @@
 /obj/machinery/gear_painter/attackby(obj/item/I, mob/living/user)
 	if(allow_mobs && istype(I, /obj/item/clothing/head/mob_holder))
 		var/obj/item/clothing/head/mob_holder/H = I
+		if(inserted)
+			to_chat(user, span_warning("Something is already inside!"))
+			return
 		if(!user.transferItemToLoc(I, src))
-			to_chat(user, "<span class='warning'>[I] is stuck to your hand!</span>")
+			to_chat(user, span_warning("[I] is stuck to your hand!"))
 			return
 		if(!QDELETED(H))
 			H.release()
 
 	if(is_type_in_list(I, allowed_types) && is_operational())
+		if(inserted)
+			to_chat(user, span_warning("Something is already inside!"))
+			return
 		if(!user.transferItemToLoc(I, src))
-			to_chat(user, "<span class='warning'>[I] is stuck to your hand!</span>")
+			to_chat(user, span_warning("[I] is stuck to your hand!"))
 			return
 		user.visible_message("<span class='notice'>[user] inserts [I] into [src]'s receptable.</span>")
 
@@ -93,7 +107,7 @@
 	if(!is_operational())
 		return
 	user.set_machine(src)
-	var/list/dat = list("<TITLE>Dye Station Control Panel</TITLE><BR>")
+	var/list/dat = list("<TITLE>Dye Bin</TITLE><BR>")
 	if(!inserted)
 		dat += "No item inserted."
 	else

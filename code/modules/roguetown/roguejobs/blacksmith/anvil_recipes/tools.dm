@@ -118,9 +118,10 @@
 	i_type = "Tools"
 
 /datum/anvil_recipe/tools/pot
-	name = "Pot"
+	name = "Metal Pot"
 	req_bar = /obj/item/ingot/iron
 	created_item = /obj/item/reagent_containers/glass/bucket/pot
+	i_type = "Tools"
 
 /datum/anvil_recipe/tools/iron_arm_left
 	name = "Iron arm (L) (+1 Cog)"
@@ -211,7 +212,7 @@
 	req_bar = /obj/item/ingot/steel
 	created_item = /obj/item/bodypart/l_arm/rprosthetic/steel
 	additional_items = list(/obj/item/roguegear)
-
+	i_type = "General"
 /datum/anvil_recipe/tools/steel_arm_right
 	name = "Steel arm (R) (+1 Cog)"
 	req_bar = /obj/item/ingot/steel

@@ -8,7 +8,6 @@
 	equip_delay_self = 10
 	bloody_icon_state = "bodyblood"
 	sewrepair = TRUE //Vrell - AFAIK, all cloaks are cloth ATM. Technically semi-less future-proof, but it removes a line of code from every subtype, which is worth it IMO.
-	flags_inv = HIDETAIL
 
 
 //////////////////////////
@@ -17,7 +16,7 @@
 
 /obj/item/clothing/cloak/tabard
 	name = "tabard"
-	desc = "A hooded vest meant for knights."
+	desc = "A long vest meant for knights."
 	color = null
 	icon_state = "tabard"
 	item_state = "tabard"
@@ -47,12 +46,14 @@
 		return
 	if(world.time > (the_time + 30 SECONDS))
 		return
+	var/symbol_chosen = FALSE
 	if(design == "Symbol")
 		design = null
 		design = input(user, "Select a symbol.","Tabard Design") as null|anything in list("chalice","psy","peace","z","imp","skull","widow","arrow")
 		if(!design)
 			return
 		design = "_[design]"
+		symbol_chosen = TRUE
 	var/colorone = input(user, "Select a primary color.","Tabard Design") as null|anything in CLOTHING_COLOR_NAMES
 	if(!colorone)
 		return
@@ -63,7 +64,6 @@
 			return
 	if(world.time > (the_time + 30 SECONDS))
 		return
-	picked = TRUE
 	if(design != "None")
 		detail_tag = design
 	switch(design)
@@ -75,6 +75,7 @@
 			detail_tag = "_box"
 		if("Diamonds")
 			detail_tag = "_dim"
+	boobed_detail = !symbol_chosen
 	color = clothing_color2hex(colorone)
 	if(colortwo)
 		detail_color = clothing_color2hex(colortwo)
@@ -82,6 +83,17 @@
 	if(ismob(loc))
 		var/mob/L = loc
 		L.update_inv_cloak()
+	if(alert("Are you pleased with your heraldry?", "Heraldry", "Yes", "No") != "Yes")
+		detail_color = initial(detail_color)
+		color = initial(color)
+		boobed_detail = initial(boobed_detail)
+		detail_tag = initial(detail_tag)
+		update_icon()
+		if(ismob(loc))
+			var/mob/L = loc
+			L.update_inv_cloak()
+		return
+	picked = TRUE
 
 /obj/item/clothing/cloak/tabard/knight
 	color = CLOTHING_PURPLE
@@ -93,8 +105,7 @@
 	..()
 	if(GLOB.lordprimary)
 		lordcolor(GLOB.lordprimary,GLOB.lordsecondary)
-	else
-		GLOB.lordcolor += src
+	GLOB.lordcolor += src
 
 /obj/item/clothing/cloak/tabard/knight/Destroy()
 	GLOB.lordcolor -= src
@@ -103,6 +114,7 @@
 /obj/item/clothing/cloak/tabard/crusader
 	detail_tag = "_psy"
 	detail_color = CLOTHING_RED
+	boobed_detail = FALSE
 
 /obj/item/clothing/cloak/tabard/crusader/Initialize()
 	..()
@@ -132,10 +144,15 @@
 	if(ismob(loc))
 		var/mob/L = loc
 		L.update_inv_cloak()
+	if(alert("Are you pleased with your heraldry?", "Heraldry", "Yes", "No") != "Yes")
+		detail_color = initial(detail_color)
+		color = initial(color)
+		update_icon()
+		if(ismob(loc))
+			var/mob/L = loc
+			L.update_inv_cloak()
+		return
 	picked = TRUE
-
-/obj/item/clothing/cloak/tabard/crusader
-	detail_tag = "_psy"
 
 /obj/item/clothing/cloak/tabard/crusader/tief
 	color = CLOTHING_RED
@@ -144,6 +161,14 @@
 /obj/item/clothing/cloak/tabard/crusader/astrata
 	color = "#9B7538"
 	detail_color = CLOTHING_WHITE
+
+/obj/item/clothing/cloak/tabard/crusader/ravox
+	color = CLOTHING_RED
+	detail_color = CLOTHING_BLACK
+
+/obj/item/clothing/cloak/tabard/crusader/malum
+	color = CLOTHING_RED
+	detail_color = CLOTHING_YELLOW
 
 /obj/item/clothing/cloak/tabard/crusader/dendor
 	color = "#4B5637"
@@ -160,6 +185,10 @@
 /obj/item/clothing/cloak/tabard/crusader/noc
 	color = "#2C2231"
 	detail_color = "#9AB0B0"
+
+/obj/item/clothing/cloak/tabard/crusader/psydon
+	color = CLOTHING_BLACK
+	detail_color = CLOTHING_WHITE
 
 //Eora content from Stonekeep
 
@@ -187,13 +216,21 @@
 	if(ismob(loc))
 		var/mob/L = loc
 		L.update_inv_cloak()
+	if(alert("Are you pleased with your heraldry?", "Heraldry", "Yes", "No") != "Yes")
+		detail_color = initial(detail_color)
+		color = initial(color)
+		update_icon()
+		if(ismob(loc))
+			var/mob/L = loc
+			L.update_inv_cloak()
+		return
 	picked = TRUE
 
 /obj/item/clothing/cloak/tabard/knight/guard
 	desc = "A tabard with the lord's heraldic colors."
-	color = CLOTHING_RED
+	color = CLOTHING_AZURE
 	detail_tag = "_spl"
-	detail_color = CLOTHING_PURPLE
+	detail_color = CLOTHING_WHITE
 
 /obj/item/clothing/cloak/tabard/knight/guard/attack_right(mob/user)
 	if(picked)
@@ -204,7 +241,6 @@
 		return
 	if(!chosen)
 		return
-	picked = TRUE
 	switch(chosen)
 		if("Split")
 			detail_tag = "_spl"
@@ -218,13 +254,20 @@
 	if(ismob(loc))
 		var/mob/L = loc
 		L.update_inv_cloak()
+	if(alert("Are you pleased with your heraldry?", "Heraldry", "Yes", "No") != "Yes")
+		detail_tag = initial(detail_tag)
+		update_icon()
+		if(ismob(loc))
+			var/mob/L = loc
+			L.update_inv_cloak()
+		return
+	picked = TRUE
 
 /obj/item/clothing/cloak/tabard/knight/guard/Initialize()
 	..()
 	if(GLOB.lordprimary)
 		lordcolor(GLOB.lordprimary,GLOB.lordsecondary)
-	else
-		GLOB.lordcolor += src
+	GLOB.lordcolor += src
 
 /obj/item/clothing/cloak/tabard/knight/guard/update_icon()
 	cut_overlays()
@@ -284,7 +327,6 @@
 			return
 	if(world.time > (the_time + 30 SECONDS))
 		return
-	picked = TRUE
 	switch(design)
 		if("Split")
 			detail_tag = "_spl"
@@ -301,13 +343,24 @@
 	if(ismob(loc))
 		var/mob/L = loc
 		L.update_inv_cloak()
+	if(alert("Are you pleased with your heraldry?", "Heraldry", "Yes", "No") != "Yes")
+		detail_color = initial(detail_color)
+		color = initial(color)
+		boobed_detail = initial(boobed_detail)
+		detail_tag = initial(detail_tag)
+		update_icon()
+		if(ismob(loc))
+			var/mob/L = loc
+			L.update_inv_cloak()
+		return
+	picked = TRUE
 
 /obj/item/clothing/cloak/stabard/guard
 	name = "guard tabard"
 	desc = "A tabard with the lord's heraldic colors."
-	color = CLOTHING_RED
+	color = CLOTHING_AZURE
 	detail_tag = "_spl"
-	detail_color = CLOTHING_PURPLE
+	detail_color = CLOTHING_WHITE
 
 /obj/item/clothing/cloak/stabard/guard/attack_right(mob/user)
 	if(picked)
@@ -318,7 +371,6 @@
 		return
 	if(!chosen)
 		return
-	picked = TRUE
 	switch(chosen)
 		if("Split")
 			detail_tag = "_spl"
@@ -332,13 +384,20 @@
 	if(ismob(loc))
 		var/mob/L = loc
 		L.update_inv_cloak()
+	if(alert("Are you pleased with your heraldry?", "Heraldry", "Yes", "No") != "Yes")
+		detail_tag = initial(detail_tag)
+		update_icon()
+		if(ismob(loc))
+			var/mob/L = loc
+			L.update_inv_cloak()
+		return
+	picked = TRUE
 
 /obj/item/clothing/cloak/stabard/guard/Initialize()
 	..()
 	if(GLOB.lordprimary)
 		lordcolor(GLOB.lordprimary,GLOB.lordsecondary)
-	else
-		GLOB.lordcolor += src
+	GLOB.lordcolor += src
 
 /obj/item/clothing/cloak/stabard/guard/update_icon()
 	cut_overlays()
@@ -424,7 +483,6 @@
 			return
 	if(world.time > (the_time + 30 SECONDS))
 		return
-	picked = TRUE
 	switch(design)
 		if("Split")
 			detail_tag = "_spl"
@@ -441,6 +499,16 @@
 	if(ismob(loc))
 		var/mob/L = loc
 		L.update_inv_cloak()
+	if(alert("Are you pleased with your heraldry?", "Heraldry", "Yes", "No") != "Yes")
+		detail_color = initial(detail_color)
+		color = initial(color)
+		detail_tag = initial(detail_tag)
+		update_icon()
+		if(ismob(loc))
+			var/mob/L = loc
+			L.update_inv_cloak()
+		return
+	picked = TRUE
 
 /obj/item/clothing/cloak/stabard/surcoat/update_icon()
 	cut_overlays()
@@ -453,9 +521,9 @@
 
 /obj/item/clothing/cloak/stabard/surcoat/guard
 	desc = "A surcoat with the lord's heraldic colors."
-	color = CLOTHING_RED
+	color = CLOTHING_AZURE
 	detail_tag = "_quad"
-	detail_color = CLOTHING_PURPLE
+	detail_color = CLOTHING_WHITE
 
 /obj/item/clothing/cloak/stabard/surcoat/guard/attack_right(mob/user)
 	if(picked)
@@ -466,7 +534,6 @@
 		return
 	if(!chosen)
 		return
-	picked = TRUE
 	switch(chosen)
 		if("Split")
 			detail_tag = "_spl"
@@ -480,14 +547,20 @@
 	if(ismob(loc))
 		var/mob/L = loc
 		L.update_inv_cloak()
-
+	if(alert("Are you pleased with your heraldry?", "Heraldry", "Yes", "No") != "Yes")
+		detail_tag = initial(detail_tag)
+		update_icon()
+		if(ismob(loc))
+			var/mob/L = loc
+			L.update_inv_cloak()
+		return
+	picked = TRUE
 
 /obj/item/clothing/cloak/stabard/surcoat/guard/Initialize()
 	..()
 	if(GLOB.lordprimary)
 		lordcolor(GLOB.lordprimary,GLOB.lordsecondary)
-	else
-		GLOB.lordcolor += src
+	GLOB.lordcolor += src
 
 /obj/item/clothing/cloak/stabard/surcoat/guard/lordcolor(primary,secondary)
 	color = primary
@@ -517,7 +590,7 @@
 //	allowed_sex = list(MALE)
 	allowed_race = NON_DWARVEN_RACE_TYPES
 	detail_tag = "_det"
-	detail_color = CLOTHING_PURPLE
+	detail_color = CLOTHING_AZURE
 
 /obj/item/clothing/cloak/lordcloak/update_icon()
 	cut_overlays()
@@ -539,8 +612,7 @@
 	..()
 	if(GLOB.lordprimary)
 		lordcolor(GLOB.lordprimary,GLOB.lordsecondary)
-	else
-		GLOB.lordcolor += src
+	GLOB.lordcolor += src
 
 /obj/item/clothing/cloak/lordcloak/Destroy()
 	GLOB.lordcolor -= src
@@ -741,7 +813,7 @@
 	dynamic_hair_suffix = ""
 	edelay_type = 1
 	body_parts_covered = HEAD
-	flags_inv = HIDEEARS|HIDEFACE|HIDEHAIR|HIDEFACIALHAIR
+	flags_inv = HIDEEARS|HIDEFACE|HIDEHAIR|HIDEFACIALHAIR|HIDETAIL
 	block2add = FOV_BEHIND
 
 /obj/item/clothing/head/hooded/equipped(mob/user, slot)
@@ -770,6 +842,11 @@
 /obj/item/clothing/cloak/raincloak/furcloak/black
 	color = "#66564d"
 
+/obj/item/clothing/cloak/raincloak/furcloak/woad
+	name = "Warden's fur cloak"
+	desc = "Usually sewn by the very wardens that wear them, this hue of blue is made to alart denizens of the forest to their presence."
+	color = "#597fb9"
+
 /obj/item/clothing/head/hooded/rainhood/furhood
 	icon_state = "fur_hood"
 	block2add = FOV_BEHIND
@@ -789,17 +866,17 @@
 	slot_flags = ITEM_SLOT_BACK_R|ITEM_SLOT_CLOAK
 
 /obj/item/clothing/cloak/cape/knight
-	color = CLOTHING_PURPLE
+	color = CLOTHING_WHITE
 
 /obj/item/clothing/cloak/cape/guard
-	color = CLOTHING_RED
+	color = CLOTHING_AZURE
 
 /obj/item/clothing/cloak/cape/guard/Initialize()
 	. = ..()
 	if(GLOB.lordprimary)
 		lordcolor(GLOB.lordprimary,GLOB.lordsecondary)
-	else
-		GLOB.lordcolor += src
+	GLOB.lordcolor += src
+
 /obj/item/clothing/cloak/cape/guard/lordcolor(primary,secondary)
 	color = secondary
 	update_icon()
@@ -919,10 +996,18 @@
 /obj/item/clothing/cloak/half/orange
 	color = CLOTHING_ORANGE
 
+/obj/item/clothing/cloak/half/rider
+	name = "rider cloak"
+	icon_state = "guardcloak"
+	color = CLOTHING_AZURE
+	allowed_sex = list(MALE, FEMALE)
+	allowed_race = NON_DWARVEN_RACE_TYPES
+	inhand_mod = FALSE
+
 /obj/item/clothing/cloak/half/vet
 	name = "town watch cloak"
 	icon_state = "guardcloak"
-	color = CLOTHING_RED
+	color = CLOTHING_AZURE
 	allowed_sex = list(MALE, FEMALE)
 	allowed_race = NON_DWARVEN_RACE_TYPES
 	inhand_mod = FALSE
@@ -931,12 +1016,165 @@
 	..()
 	if(GLOB.lordprimary)
 		lordcolor(GLOB.lordprimary,GLOB.lordsecondary)
-	else
-		GLOB.lordcolor += src
+	GLOB.lordcolor += src
 
 /obj/item/clothing/cloak/half/vet/Destroy()
 	GLOB.lordcolor -= src
 	return ..()
+
+/obj/item/clothing/cloak/templar/psydon
+	name = "psydon tabard"
+	desc = "A medieval overcoat meant to be used over the armor. This one has the symbol of Psydon on it."
+	icon_state = "tabard_weeping"
+	alternate_worn_layer = TABARD_LAYER
+	body_parts_covered = CHEST|GROIN
+	boobed = TRUE
+	mob_overlay_icon = 'icons/roguetown/clothing/onmob/detailed/tabards.dmi'
+	sleeved = 'icons/roguetown/clothing/onmob/detailed/tabards.dmi'
+	sleevetype = "shirt"
+	nodismemsleeves = TRUE
+	slot_flags = ITEM_SLOT_ARMOR|ITEM_SLOT_CLOAK
+	flags_inv = HIDECROTCH|HIDEBOOB
+
+/obj/item/clothing/cloak/templar/astrata
+	name = "astratan tabard"
+	desc = "A medieval overcoat meant to be used over the armor. This one has the symbol of Astrata on it."
+	icon_state = "tabard_astrata_alt"
+	alternate_worn_layer = TABARD_LAYER
+	body_parts_covered = CHEST|GROIN
+	boobed = TRUE
+	mob_overlay_icon = 'icons/roguetown/clothing/onmob/detailed/tabards.dmi'
+	sleeved = 'icons/roguetown/clothing/onmob/detailed/tabards.dmi'
+	sleevetype = "shirt"
+	nodismemsleeves = TRUE
+	slot_flags = ITEM_SLOT_ARMOR|ITEM_SLOT_CLOAK
+	flags_inv = HIDECROTCH|HIDEBOOB
+
+/obj/item/clothing/cloak/templar/noc
+	name = "noc tabard"
+	desc = "A medieval overcoat meant to be used over the armor. This one has the symbol of Noc on it."
+	icon_state = "tabard_noc"
+	alternate_worn_layer = TABARD_LAYER
+	body_parts_covered = CHEST|GROIN
+	boobed = TRUE
+	mob_overlay_icon = 'icons/roguetown/clothing/onmob/detailed/tabards.dmi'
+	sleeved = 'icons/roguetown/clothing/onmob/detailed/tabards.dmi'
+	sleevetype = "shirt"
+	nodismemsleeves = TRUE
+	slot_flags = ITEM_SLOT_ARMOR|ITEM_SLOT_CLOAK
+	flags_inv = HIDECROTCH|HIDEBOOB
+
+/obj/item/clothing/cloak/templar/dendor
+	name = "dendor tabard"
+	desc = "A medieval overcoat meant to be used over the armor. This one has the symbol of Dendor on it."
+	icon_state = "tabard_dendor"
+	alternate_worn_layer = TABARD_LAYER
+	body_parts_covered = CHEST|GROIN
+	boobed = TRUE
+	mob_overlay_icon = 'icons/roguetown/clothing/onmob/detailed/tabards.dmi'
+	sleeved = 'icons/roguetown/clothing/onmob/detailed/tabards.dmi'
+	sleevetype = "shirt"
+	nodismemsleeves = TRUE
+	slot_flags = ITEM_SLOT_ARMOR|ITEM_SLOT_CLOAK
+	flags_inv = HIDECROTCH|HIDEBOOB
+
+/obj/item/clothing/cloak/templar/necra
+	name = "necra tabard"
+	desc = "A medieval overcoat meant to be used over the armor. This one has the symbol of Necra on it."
+	icon_state = "tabard_necra"
+	alternate_worn_layer = TABARD_LAYER
+	body_parts_covered = CHEST|GROIN
+	boobed = TRUE
+	mob_overlay_icon = 'icons/roguetown/clothing/onmob/detailed/tabards.dmi'
+	sleeved = 'icons/roguetown/clothing/onmob/detailed/tabards.dmi'
+	sleevetype = "shirt"
+	nodismemsleeves = TRUE
+	slot_flags = ITEM_SLOT_ARMOR|ITEM_SLOT_CLOAK
+	flags_inv = HIDECROTCH|HIDEBOOB
+
+/obj/item/clothing/cloak/templar/abyssor
+	name = "abyssor tabard"
+	desc = "A medieval overcoat meant to be used over the armor. This one has the symbol of Abyssor on it."
+	icon_state = "tabard_abyssor"
+	alternate_worn_layer = TABARD_LAYER
+	body_parts_covered = CHEST|GROIN
+	boobed = TRUE
+	mob_overlay_icon = 'icons/roguetown/clothing/onmob/detailed/tabards.dmi'
+	sleeved = 'icons/roguetown/clothing/onmob/detailed/tabards.dmi'
+	sleevetype = "shirt"
+	nodismemsleeves = TRUE
+	slot_flags = ITEM_SLOT_ARMOR|ITEM_SLOT_CLOAK
+	flags_inv = HIDECROTCH|HIDEBOOB
+
+/obj/item/clothing/cloak/templar/malum
+	name = "malum tabard"
+	desc = "A medieval overcoat meant to be used over the armor. This one has the symbol of Malum on it."
+	icon_state = "tabard_malum"
+	alternate_worn_layer = TABARD_LAYER
+	body_parts_covered = CHEST|GROIN
+	boobed = TRUE
+	mob_overlay_icon = 'icons/roguetown/clothing/onmob/detailed/tabards.dmi'
+	sleeved = 'icons/roguetown/clothing/onmob/detailed/tabards.dmi'
+	sleevetype = "shirt"
+	nodismemsleeves = TRUE
+	slot_flags = ITEM_SLOT_ARMOR|ITEM_SLOT_CLOAK
+	flags_inv = HIDECROTCH|HIDEBOOB
+
+/obj/item/clothing/cloak/templar/eora
+	name = "eora tabard"
+	desc = "A medieval overcoat meant to be used over the armor. This one has the symbol of Eora on it."
+	icon_state = "tabard_eora"
+	alternate_worn_layer = TABARD_LAYER
+	body_parts_covered = CHEST|GROIN
+	boobed = TRUE
+	mob_overlay_icon = 'icons/roguetown/clothing/onmob/detailed/tabards.dmi'
+	sleeved = 'icons/roguetown/clothing/onmob/detailed/tabards.dmi'
+	sleevetype = "shirt"
+	nodismemsleeves = TRUE
+	slot_flags = ITEM_SLOT_ARMOR|ITEM_SLOT_CLOAK
+	flags_inv = HIDECROTCH|HIDEBOOB
+
+/obj/item/clothing/cloak/templar/pestra
+	name = "pestra tabard"
+	desc = "A medieval overcoat meant to be used over the armor. This one has the symbol of Pestra on it."
+	icon_state = "tabard_pestra"
+	alternate_worn_layer = TABARD_LAYER
+	body_parts_covered = CHEST|GROIN
+	boobed = TRUE
+	mob_overlay_icon = 'icons/roguetown/clothing/onmob/detailed/tabards.dmi'
+	sleeved = 'icons/roguetown/clothing/onmob/detailed/tabards.dmi'
+	sleevetype = "shirt"
+	nodismemsleeves = TRUE
+	slot_flags = ITEM_SLOT_ARMOR|ITEM_SLOT_CLOAK
+	flags_inv = HIDECROTCH|HIDEBOOB
+
+/obj/item/clothing/cloak/templar/ravox
+	name = "ravox tabard"
+	desc = "A medieval overcoat meant to be used over the armor. This one has the symbol of Ravox on it."
+	icon_state = "tabard_ravox"
+	alternate_worn_layer = TABARD_LAYER
+	body_parts_covered = CHEST|GROIN
+	boobed = TRUE
+	mob_overlay_icon = 'icons/roguetown/clothing/onmob/detailed/tabards.dmi'
+	sleeved = 'icons/roguetown/clothing/onmob/detailed/tabards.dmi'
+	sleevetype = "shirt"
+	nodismemsleeves = TRUE
+	slot_flags = ITEM_SLOT_ARMOR|ITEM_SLOT_CLOAK
+	flags_inv = HIDECROTCH|HIDEBOOB
+
+/obj/item/clothing/cloak/templar/xylix
+	name = "xylix tabard"
+	desc = "A medieval overcoat meant to be used over the armor. This one has the symbol of Xylix on it."
+	icon_state = "tabard_xylix"
+	alternate_worn_layer = TABARD_LAYER
+	body_parts_covered = CHEST|GROIN
+	boobed = TRUE
+	mob_overlay_icon = 'icons/roguetown/clothing/onmob/detailed/tabards.dmi'
+	sleeved = 'icons/roguetown/clothing/onmob/detailed/tabards.dmi'
+	sleevetype = "shirt"
+	nodismemsleeves = TRUE
+	slot_flags = ITEM_SLOT_ARMOR|ITEM_SLOT_CLOAK
+	flags_inv = HIDECROTCH|HIDEBOOB
 
 // Dumping old black knight stuff here
 /obj/item/clothing/cloak/cape/blkknight
@@ -1045,9 +1283,9 @@
 /obj/item/clothing/cloak/stabard/guardhood
 	name = "guard hood"
 	desc = "A hood with the lord's heraldic colors."
-	color = CLOTHING_RED
+	color = CLOTHING_AZURE
 	detail_tag = "_spl"
-	detail_color = CLOTHING_PURPLE
+	detail_color = CLOTHING_WHITE
 	icon_state = "guard_hood"
 	body_parts_covered = CHEST
 
@@ -1060,7 +1298,6 @@
 		return
 	if(!chosen)
 		return
-	picked = TRUE
 	switch(chosen)
 		if("Split")
 			detail_tag = "_spl"
@@ -1068,13 +1305,20 @@
 	if(ismob(loc))
 		var/mob/L = loc
 		L.update_inv_cloak()
+	if(alert("Are you pleased with your heraldry?", "Heraldry", "Yes", "No") != "Yes")
+		detail_tag = initial(detail_tag)
+		update_icon()
+		if(ismob(loc))
+			var/mob/L = loc
+			L.update_inv_cloak()
+		return
+	picked = TRUE
 
 /obj/item/clothing/cloak/stabard/guardhood/Initialize()
 	..()
 	if(GLOB.lordprimary)
 		lordcolor(GLOB.lordprimary,GLOB.lordsecondary)
-	else
-		GLOB.lordcolor += src
+	GLOB.lordcolor += src
 
 /obj/item/clothing/cloak/stabard/guardhood/update_icon()
 	cut_overlays()

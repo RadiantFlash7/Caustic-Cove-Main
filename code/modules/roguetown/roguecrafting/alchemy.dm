@@ -12,6 +12,12 @@
 	reqs = list(/obj/item/reagent_containers/glass/bottle = 1, /obj/item/ash = 2, /obj/item/rogueore/coal = 1, /obj/item/natural/cloth = 1)
 	craftdiff = 4
 
+/datum/crafting_recipe/roguetown/alchemy/thermometer
+	name = "Thermoscope"
+	result = list(/obj/item/thermometer)
+	reqs = list(/obj/item/reagent_containers/glass/bottle = 1, /datum/reagent/mercury = 5)
+	craftdiff = 2
+
 /datum/crafting_recipe/roguetown/alchemy/ozium
 	name = "Ozium"
 	result = list(/obj/item/reagent_containers/powder/ozium)
@@ -65,7 +71,7 @@
 				/obj/item/reagent_containers/powder/health,
 				/obj/item/reagent_containers/powder/health,
 				)
-	reqs = list(/obj/item/ash = 3, /obj/item/reagent_containers/food/snacks/grown/berries/rogue = 1, /obj/item/reagent_containers/food/snacks/rogue/meat/mince = 2, /obj/item/natural/worms/leech = 2)
+	reqs = list(/obj/item/ash = 3, /obj/item/reagent_containers/food/snacks/grown/berries/rogue = 1, /obj/item/reagent_containers/food/snacks/rogue/meat/mince = 3, /obj/item/natural/worms/leech = 2)
 	craftdiff = 4
 
 /// bottle craft

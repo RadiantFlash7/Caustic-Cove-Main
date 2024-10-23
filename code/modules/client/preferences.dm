@@ -691,7 +691,7 @@ GLOBAL_LIST_EMPTY(chosen_names)
 				dat += "<a class='linkOff' href='byond://?src=[REF(N)];late_join=1'>JOINLATE</a>"
 			dat += " - <a href='?_src_=prefs;preference=migrants'>MIGRATION</a>"
 			dat += "<br><a href='?_src_=prefs;preference=manifest'>ACTORS</a>"
-			dat += " - <a href='?_src_=prefs;preference=observe'>VOYEUR</a>"
+//			dat += " - <a href='?_src_=prefs;preference=observe'>VOYEUR</a>"
 	else
 		dat += "<a href='?_src_=prefs;preference=finished'>DONE</a>"
 
@@ -1471,7 +1471,7 @@ Slots: [job.spawn_positions]</span>
 						if(new_name)
 							real_name = new_name
 						else
-							to_chat(user, "<font color='red'>Invalid name. Your name should be at least 2 and at most [MAX_NAME_LEN] characters long. It may only contain the characters A-Z, a-z, -, ' and .</font>")
+							to_chat(user, "<font color='red'>Invalid name. Your name should be at least 2 and at most [MAX_NAME_LEN] characters long. It may only contain the characters A-Z, a-z, -, ', . and ,.</font>")
 
 //				if("age")
 //					var/new_age = input(user, "Choose your character's age:\n([AGE_MIN]-[AGE_MAX])", "Years Dead") as num|null
@@ -1542,9 +1542,9 @@ Slots: [job.spawn_positions]</span>
 					var/faith_input = input(user, "Choose your character's faith", "Faith") as null|anything in faiths_named
 					if(faith_input)
 						var/datum/faith/faith = faiths_named[faith_input]
-						to_chat(user, "<font color='purple'>Faith: [faith.name]</font>")
-						to_chat(user, "<font color='purple'>Background: [faith.desc]</font>")
-						to_chat(user, "<font color='purple'>Likely Worshippers: [faith.worshippers]</font>")
+						to_chat(user, "<font color='yellow'>Faith: [faith.name]</font>")
+						to_chat(user, "Background: [faith.desc]")
+						to_chat(user, "<font color='red'>Likely Worshippers: [faith.worshippers]</font>")
 						selected_patron = GLOB.patronlist[faith.godhead] || GLOB.patronlist[pick(GLOB.patrons_by_faith[faith_input])]
 
 				if("patron")
@@ -1558,10 +1558,10 @@ Slots: [job.spawn_positions]</span>
 					var/god_input = input(user, "Choose your character's patron god", "[current_faith.name]") as null|anything in patrons_named
 					if(god_input)
 						selected_patron = patrons_named[god_input]
-						to_chat(user, "<font color='purple'>Patron: [selected_patron]</font>")
-						to_chat(user, "<font color='purple'>Domain: [selected_patron.domain]</font>")
-						to_chat(user, "<font color='purple'>Background: [selected_patron.desc]</font>")
-						to_chat(user, "<font color='purple'>Likely Worshippers: [selected_patron.worshippers]</font>")
+						to_chat(user, "<font color='yellow'>Patron: [selected_patron]</font>")
+						to_chat(user, "<font color='#FFA500'>Domain: [selected_patron.domain]</font>")
+						to_chat(user, "Background: [selected_patron.desc]")
+						to_chat(user, "<font color='red'>Likely Worshippers: [selected_patron.worshippers]</font>")
 
 				if("bdetail")
 					var/list/loly = list("Not yet.","Work in progress.","Don't click me.","Stop clicking this.","Nope.","Be patient.","Sooner or later.")
@@ -2045,10 +2045,10 @@ Slots: [job.spawn_positions]</span>
 					parent.view_actors_manifest()
 					return
 
-				if("observe")
-					var/mob/dead/new_player/P = user
-					P.make_me_an_observer()
-					return
+//				if("observe")
+//					var/mob/dead/new_player/P = user
+//					P.make_me_an_observer()
+//					return
 
 				if("finished")
 					user << browse(null, "window=latechoices") //closes late choices window

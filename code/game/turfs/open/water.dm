@@ -80,6 +80,7 @@
 					return
 			if(user.mind && !user.buckled)
 				var/drained = max(15 - (user.mind.get_skill_level(/datum/skill/misc/swimming) * 5), 1)
+				user.mind.add_sleep_experience(/datum/skill/misc/swimming, user.STAINT * 0.5)
 //				drained += (user.checkwornweight()*2)
 				if(!user.check_armor_skill())
 					drained += 40
@@ -393,3 +394,19 @@
 	slowdown = 8
 	swim_skill = TRUE
 	wash_in = FALSE
+
+/turf/open/water/acid
+	name = "diluted acid"
+	desc = "A foul smelling depth of less-than acid."
+	icon_state = "acid"
+	icon = 'icons/turf/roguefloor.dmi'
+	water_level = 2 //waist high
+	water_color = "#56ff0d"
+	slowdown = 4
+	swim_skill = TRUE
+	wash_in = FALSE //no
+	water_reagent = /datum/reagent/water/gross
+
+/turf/open/water/acid/Initialize()
+	.  = ..()
+	icon_state = "acid"
